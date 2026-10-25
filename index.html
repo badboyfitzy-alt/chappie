@@ -278,8 +278,7 @@
     }
   </script>
 </body>
-</html>
-// Replace with your Client ID from the Twitch Developer Console
+</html>// Replace with your Client ID from the Twitch Developer Console
 const TWITCH_CLIENT_ID = 'YOUR_TWITCH_CLIENT_ID'; 
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 
@@ -328,31 +327,6 @@ async function fetchTwitchProfile(token) {
   
   console.log(`Successfully authenticated as: ${user.display_name} (#${user.login})`);
   alert(`Connected to Twitch as ${user.display_name}! Chappy is now linked to your channel.`);
-}// Example using TMI.js (Twitch Messaging Interface)
-const tmi = require('tmi.js');
-
-const client = new tmi.Client({
-  options: { debug: true },
-  channels: [ 'YOUR_TWITCH_USERNAME' ] // Connects to your live channel chat
-});
-
-client.connect();
-
-client.on('chat', (channel, userstate, message, self) => {
-  if (self) return;
-
-  const bits = parseInt(userstate.bits) || 0;
-  
-  // 1. Check for 50+ Bits TTS Gate
-  if (bits >= 50) {
-    console.log(`[TTS READ ALOUD]: ${userstate['display-name']} cheered ${bits} bits: ${message}`);
-    // Trigger audio TTS reader here
-  }
-
-  // 2. Respond to !joke commands
-  if (message.toLowerCase().startsWith('!joke')) {
-    client.say(channel, `@${userstate['display-name']}, why did the streamer bring a ladder? To reach the high scores!`);
-  }
 }// Example using TMI.js (Twitch Messaging Interface)
 const tmi = require('tmi.js');
 
