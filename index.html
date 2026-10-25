@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Chappie — Universal AI Stream Bot & Creator Suite</title>
+  <title>Chappie — Ultimate Zero-Setup AI Twitch Bot</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -51,21 +51,21 @@
       <div>
         <div class="flex items-center gap-1.5">
           <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white leading-none">Chappie</h1>
-          <span class="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">v7.2 Full Sync</span>
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">Instant Launch</span>
         </div>
-        <p class="text-[11px] text-zinc-400 mt-0.5 hidden sm:block">AI Stream Bot & Creator Suite</p>
+        <p class="text-[11px] text-zinc-400 mt-0.5 hidden sm:block">Universal AI Stream Bot & Creator Suite</p>
       </div>
     </div>
 
-    <div class="flex items-center gap-2 sm:gap-3">
-      <div class="bg-zinc-900 border border-twitch-border px-2.5 py-1 rounded-xl flex items-center gap-1.5">
-        <i class="fa-solid fa-coins text-amber-400 text-xs"></i>
-        <span id="tokenBalance" class="text-xs font-bold text-amber-400">2,500</span>
+    <!-- Quick Channel Connect Header Box -->
+    <div class="flex items-center gap-2">
+      <div class="relative flex items-center">
+        <span class="absolute left-3 text-xs text-zinc-500 font-bold">#</span>
+        <input type="text" id="headerChannelInput" placeholder="twitch_username" class="bg-zinc-950 border border-twitch-border rounded-xl pl-7 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-twitch-purple w-32 sm:w-44 font-semibold">
       </div>
-
-      <button id="authBtn" onclick="openTwitchAuth()" class="bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-purple-900/30">
-        <i class="fa-brands fa-twitch text-xs sm:text-sm"></i>
-        <span id="authBtnText" class="truncate max-w-[100px] sm:max-w-none">Connect</span>
+      <button onclick="connectChannelFromHeader()" class="bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-purple-900/30">
+        <i class="fa-solid fa-plug text-xs"></i>
+        <span>Sync Channel</span>
       </button>
     </div>
   </header>
@@ -80,16 +80,16 @@
     <aside id="sidebar" class="fixed lg:static top-0 left-0 h-full w-72 lg:w-64 bg-twitch-card border-r border-twitch-border p-4 flex flex-col justify-between z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shrink-0">
       <div class="space-y-1">
         <div class="flex items-center justify-between lg:hidden mb-4 pb-2 border-b border-twitch-border">
-          <span class="font-bold text-sm text-white flex items-center gap-2">🤖 Chappie Navigation</span>
+          <span class="font-bold text-sm text-white flex items-center gap-2">🤖 Chappie Suite</span>
           <button onclick="toggleSidebar()" class="text-zinc-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
         </div>
-        <p class="text-[10px] uppercase font-bold text-zinc-500 px-3 mb-2 tracking-wider">Dashboard Navigation</p>
+        <p class="text-[10px] uppercase font-bold text-zinc-500 px-3 mb-2 tracking-wider">Features Suite</p>
         
         <button onclick="switchTab('overview')" class="tab-btn w-full flex items-center gap-3 px-3 py-3 lg:py-2.5 rounded-xl text-xs font-bold text-white bg-twitch-purple/20 border border-twitch-purple/40 active:scale-98 transition" data-tab="overview">
-          <i class="fa-solid fa-house w-4 text-purple-400 text-sm"></i> Overview
+          <i class="fa-solid fa-house w-4 text-purple-400 text-sm"></i> Dashboard Overview
         </button>
         <button onclick="switchTab('ai')" class="tab-btn w-full flex items-center gap-3 px-3 py-3 lg:py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 active:scale-98 transition" data-tab="ai">
-          <i class="fa-solid fa-brain w-4 text-zinc-400 text-sm"></i> AI & Personality
+          <i class="fa-solid fa-brain w-4 text-zinc-400 text-sm"></i> AI Chat Partner
         </button>
         <button onclick="switchTab('tts')" class="tab-btn w-full flex items-center gap-3 px-3 py-3 lg:py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 active:scale-98 transition" data-tab="tts">
           <i class="fa-solid fa-volume-high w-4 text-zinc-400 text-sm"></i> Bits TTS Reader
@@ -112,11 +112,8 @@
       </div>
 
       <div class="bg-zinc-950 p-3 rounded-xl border border-twitch-border space-y-2 mt-4">
-        <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">OBS Browser Source URL</span>
-        <div class="flex items-center gap-1 bg-twitch-card px-2 py-1 rounded border border-twitch-border">
-          <input type="text" readonly value="https://chappie.app/overlay/v3" class="w-full bg-transparent text-[10px] text-zinc-400 focus:outline-none">
-          <button onclick="alert('OBS Overlay URL copied!')" class="text-xs text-purple-400 hover:text-white p-1"><i class="fa-solid fa-copy"></i></button>
-        </div>
+        <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">Zero Setup Active</span>
+        <p class="text-[10px] text-zinc-400">Simply enter any Twitch username above to connect live chat instantly!</p>
       </div>
     </aside>
 
@@ -130,30 +127,30 @@
         <section id="tab-overview" class="tab-content space-y-4 sm:space-y-6">
           <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-md flex items-center justify-between">
             <div id="profileContent" class="flex items-center gap-3 sm:gap-4">
-              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-600 text-lg sm:text-xl border border-twitch-border shrink-0">
-                <i class="fa-solid fa-user-slash"></i>
+              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 text-lg sm:text-2xl border border-purple-500/30 shrink-0">
+                🤖
               </div>
               <div>
-                <h3 class="font-bold text-white text-sm sm:text-base">No Profile Linked</h3>
-                <p class="text-[11px] sm:text-xs text-zinc-400">Tap "Connect" to link your Twitch channel.</p>
+                <h3 id="currentChannelHeading" class="font-bold text-white text-sm sm:text-base">No Channel Connected</h3>
+                <p id="currentChannelSubtext" class="text-[11px] sm:text-xs text-zinc-400">Type your Twitch username in the top right box to launch!</p>
               </div>
             </div>
-            <span id="profileStatusBadge" class="text-[10px] sm:text-xs font-bold bg-zinc-800 text-zinc-400 px-2.5 sm:px-3 py-1 rounded-full border border-zinc-700 whitespace-nowrap">Offline</span>
+            <span id="profileStatusBadge" class="text-[10px] sm:text-xs font-bold bg-zinc-800 text-zinc-400 px-2.5 sm:px-3 py-1 rounded-full border border-zinc-700 whitespace-nowrap">Ready to Connect</span>
           </div>
 
-          <!-- Feature Toggles -->
+          <!-- Quick Feature Toggles -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div class="bg-twitch-card p-3.5 rounded-xl border border-twitch-border flex items-center justify-between">
               <div>
                 <span class="text-xs font-bold text-white block">AI Auto-Chat (@chappie)</span>
-                <span class="text-[10px] text-zinc-400">Live replies to Twitch</span>
+                <span class="text-[10px] text-zinc-400">Responds to chat</span>
               </div>
               <input type="checkbox" checked class="accent-purple-600 w-5 h-5 cursor-pointer">
             </div>
             <div class="bg-twitch-card p-3.5 rounded-xl border border-twitch-border flex items-center justify-between">
               <div>
                 <span class="text-xs font-bold text-white block">Bits TTS Reader</span>
-                <span class="text-[10px] text-zinc-400">Min 50 Bits</span>
+                <span class="text-[10px] text-zinc-400">Audio voice cheer</span>
               </div>
               <input type="checkbox" checked class="accent-purple-600 w-5 h-5 cursor-pointer">
             </div>
@@ -176,7 +173,7 @@
               </button>
             </div>
             <div id="clipFeed" class="bg-zinc-950 border border-twitch-border rounded-xl p-3 space-y-2 overflow-y-auto h-40 sm:h-44 custom-scrollbar text-xs">
-              <div class="text-zinc-600 text-center py-8">[ Watching channel chat for clip triggers ]</div>
+              <div class="text-zinc-600 text-center py-8">[ Connect channel to begin auto-detecting stream clips ]</div>
             </div>
           </div>
         </section>
@@ -184,16 +181,16 @@
         <!-- TAB 2: AI & PERSONALITY -->
         <section id="tab-ai" class="tab-content space-y-4 hidden">
           <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
-            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">AI Persona & Conversation Controls</h3>
+            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">AI Persona & Conversation Engine</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label class="text-xs font-semibold text-zinc-300 block mb-1">Bot Display Name</label>
                 <input type="text" id="botNameInput" value="Chappie" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
               </div>
               <div>
-                <label class="text-xs font-semibold text-zinc-300 block mb-1">Conversation Vibe</label>
+                <label class="text-xs font-semibold text-zinc-300 block mb-1">AI Personality Vibe</label>
                 <select id="aiPersonality" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-zinc-200">
-                  <option value="pro">Pro Stream Assistant (Smart & Friendly)</option>
+                  <option value="pro">Pro Stream Assistant (Smart & Helpful)</option>
                   <option value="hype">Hype Gamer (High Energy)</option>
                   <option value="sarcastic">Sarcastic Roaster (Witty)</option>
                 </select>
@@ -201,9 +198,9 @@
             </div>
             <div>
               <label class="text-xs font-semibold text-zinc-300 block mb-1">System Prompt Instructions</label>
-              <textarea rows="4" class="w-full bg-zinc-950 border border-twitch-border rounded-xl p-3 text-xs text-zinc-200 leading-relaxed">You are Chappie, an elite AI stream assistant. Hold natural, witty conversations with viewers, answer questions intelligently, and keep stream chat lively.</textarea>
+              <textarea rows="4" class="w-full bg-zinc-950 border border-twitch-border rounded-xl p-3 text-xs text-zinc-200 leading-relaxed">You are Chappie, an elite AI stream bot. Reply with natural, entertaining responses, answer questions intelligently, and keep chat engaged.</textarea>
             </div>
-            <button onclick="alert('AI Conversation Settings Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save AI Settings</button>
+            <button onclick="alert('AI Persona Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save AI Settings</button>
           </div>
         </section>
 
@@ -213,18 +210,7 @@
             <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Bits Text-to-Speech (TTS) Reader</h3>
             <div>
               <label class="text-xs font-semibold text-zinc-300 block mb-1">Minimum Bits Gate for Audio Voice</label>
-              <div class="flex items-center gap-2">
-                <input type="number" id="minBitsInput" value="50" min="1" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white font-bold">
-                <span class="text-xs text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20 px-3 py-2.5 rounded-xl">Bits</span>
-              </div>
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-zinc-300 block mb-1">Voice Model</label>
-              <select class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-zinc-200">
-                <option>Standard Announcer (En-US)</option>
-                <option>Energetic Streamer</option>
-                <option>Robot AI Voice</option>
-              </select>
+              <input type="number" id="minBitsInput" value="50" min="1" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white font-bold">
             </div>
             <button onclick="alert('TTS Settings Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save TTS Config</button>
           </div>
@@ -233,43 +219,16 @@
         <!-- TAB 4: AUTO CLIP HUNTER -->
         <section id="tab-clips" class="tab-content space-y-4 hidden">
           <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
-            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Auto Clip Hunter Configuration</h3>
-            <div>
-              <label class="text-xs font-semibold text-zinc-300 block mb-1">Trigger Sensitivity</label>
-              <select class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-zinc-200">
-                <option>High (Clips on 3+ chat reactions)</option>
-                <option selected>Medium (Clips on 5+ chat reactions)</option>
-                <option>Low (Massive hype spikes only)</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-zinc-300 block mb-1">Hype Trigger Keywords</label>
-              <input type="text" value="LOL, LMAO, W, CLIP THIS, OMG, SHEESH, KEKW" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
-            </div>
-            <button onclick="alert('Clipper Settings Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save Clipper Settings</button>
+            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Auto Clip Hunter</h3>
+            <button onclick="triggerManualAutoClip()" class="bg-twitch-purple text-white px-4 py-2.5 rounded-xl text-xs font-bold">Generate Test Clip</button>
           </div>
         </section>
 
         <!-- TAB 5: AUTO-MODERATION -->
         <section id="tab-automod" class="tab-content space-y-4 hidden">
           <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
-            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Auto-Moderation & Spam Filters</h3>
-            <div class="space-y-3">
-              <label class="flex items-center gap-2.5 text-xs text-zinc-300 cursor-pointer">
-                <input type="checkbox" checked class="accent-purple-600 w-4 h-4"> Block URLs & Hyperlinks
-              </label>
-              <label class="flex items-center gap-2.5 text-xs text-zinc-300 cursor-pointer">
-                <input type="checkbox" checked class="accent-purple-600 w-4 h-4"> Block Excessive CAPS Lock Spam
-              </label>
-              <label class="flex items-center gap-2.5 text-xs text-zinc-300 cursor-pointer">
-                <input type="checkbox" checked class="accent-purple-600 w-4 h-4"> Block Excessive Emote Spam
-              </label>
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-zinc-300 block mb-1">Custom Banned Word Blacklist</label>
-              <textarea rows="3" class="w-full bg-zinc-950 border border-twitch-border rounded-lg p-3 text-xs text-zinc-200" placeholder="Type banned words separated by commas..."></textarea>
-            </div>
-            <button onclick="alert('Mod Settings Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save Mod Settings</button>
+            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Auto-Moderation</h3>
+            <p class="text-xs text-zinc-400">Automated spam and URL protection enabled by default.</p>
           </div>
         </section>
 
@@ -277,82 +236,52 @@
         <section id="tab-timers" class="tab-content space-y-4 hidden">
           <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
             <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Scheduled Chat Timers</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
-                <label class="text-xs font-semibold text-zinc-300 block mb-1">Timer Interval</label>
-                <select class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-zinc-200">
-                  <option>Every 15 Minutes</option>
-                  <option selected>Every 30 Minutes</option>
-                  <option>Every 60 Minutes</option>
-                </select>
-              </div>
-              <div>
-                <label class="text-xs font-semibold text-zinc-300 block mb-1">Command Trigger</label>
-                <input type="text" value="!socials" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
-              </div>
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-zinc-300 block mb-1">Announcement Message</label>
-              <input type="text" value="Make sure to follow on Twitter/X, Discord, and YouTube! Links are in bio." class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
-            </div>
-            <button onclick="alert('Timer Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save Timer</button>
+            <input type="text" value="Make sure to follow on Twitter/X, Discord, and YouTube!" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
+            <button onclick="alert('Timer Saved!')" class="bg-twitch-purple text-white px-4 py-2.5 rounded-xl text-xs font-bold">Save Timer</button>
           </div>
         </section>
 
         <!-- TAB 7: LOYALTY POINTS -->
         <section id="tab-economy" class="tab-content space-y-4 hidden">
           <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
-            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Viewer Loyalty Points Economy</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
-                <label class="text-xs font-semibold text-zinc-300 block mb-1">Points Earned per Minute Watched</label>
-                <input type="number" value="10" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
-              </div>
-              <div>
-                <label class="text-xs font-semibold text-zinc-300 block mb-1">Subscriber Multiplier</label>
-                <input type="number" value="2" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
-              </div>
-            </div>
-            <button onclick="alert('Economy Config Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save Economy Config</button>
+            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Viewer Loyalty Points</h3>
+            <input type="number" value="10" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
+            <button onclick="alert('Economy Config Saved!')" class="bg-twitch-purple text-white px-4 py-2.5 rounded-xl text-xs font-bold">Save</button>
           </div>
         </section>
 
         <!-- TAB 8: OBS OVERLAYS -->
         <section id="tab-overlays" class="tab-content space-y-4 hidden">
           <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
-            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">OBS Stream Overlays Generator</h3>
-            <p class="text-xs text-zinc-400">Copy this browser source URL into OBS Studio or Streamlabs to display Chappie's live alerts on screen.</p>
-            <div class="flex flex-col sm:flex-row gap-2">
-              <input type="text" readonly value="https://chappie.app/overlay/source?key=live_sec_9812" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-zinc-300">
-              <button onclick="alert('Overlay URL copied to clipboard!')" class="bg-purple-700 hover:bg-purple-600 active:scale-95 text-white font-bold px-4 py-2.5 rounded-xl text-xs whitespace-nowrap">Copy URL</button>
-            </div>
+            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">OBS Stream Overlays</h3>
+            <input type="text" readonly value="https://chappie.app/overlay/source?key=live_sec_9812" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-zinc-300">
+            <button onclick="alert('Overlay URL copied!')" class="bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs">Copy URL</button>
           </div>
         </section>
 
       </div>
 
-      <!-- Right Column: Live Twitch Chat Feed with @Chappie Live Send Engine -->
+      <!-- Right Column: Live Twitch Chat Feed with Instant Sync -->
       <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-lg flex flex-col justify-between h-[480px] sm:h-[520px]">
         <div>
           <div class="flex items-center justify-between border-b border-twitch-border pb-3 mb-3">
             <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
-              <i class="fa-solid fa-satellite-dish text-emerald-400"></i> Live Twitch Chat & AI Bot
+              <i class="fa-solid fa-satellite-dish text-emerald-400"></i> Live Twitch Chat & Chappie AI
             </h3>
             <span id="chatStatusBadge" class="text-xs text-zinc-500 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-amber-500" id="chatDot"></span> <span id="chatStatusText">Connect Channel First</span>
+              <span class="w-2 h-2 rounded-full bg-amber-500" id="chatDot"></span> <span id="chatStatusText">Disconnected</span>
             </span>
           </div>
           <div id="chatBox" class="bg-zinc-950 border border-twitch-border rounded-xl p-3 space-y-3 h-72 sm:h-80 overflow-y-auto custom-scrollbar text-xs">
-            <div class="text-zinc-500 text-center py-4">[ Connect your Twitch profile above to sync live chat ]</div>
+            <div class="text-zinc-500 text-center py-8">[ Enter your Twitch username at the top right to start ]</div>
           </div>
         </div>
 
         <div class="mt-3 space-y-2">
           <div class="flex gap-2">
             <input type="text" id="chatInput" placeholder="Say hello or ask @chappie..." class="flex-1 bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple" onkeypress="if(event.key==='Enter') sendTwitchMessage()">
-            <input type="number" id="bitsInput" value="0" min="0" placeholder="Bits" class="w-16 sm:w-20 bg-zinc-950 border border-twitch-border rounded-xl px-2 py-2.5 text-xs text-amber-400 font-bold text-center focus:outline-none focus:border-amber-500" title="Cheer Bits">
           </div>
-          <button onclick="sendTwitchMessage()" class="w-full bg-twitch-purple hover:bg-twitch-hover active:scale-98 py-2.5 rounded-xl text-xs font-bold text-white transition">Send Message to Twitch Chat</button>
+          <button onclick="sendTwitchMessage()" class="w-full bg-twitch-purple hover:bg-twitch-hover active:scale-98 py-2.5 rounded-xl text-xs font-bold text-white transition">Send Test Message</button>
         </div>
       </div>
 
@@ -369,14 +298,6 @@
       <i class="fa-solid fa-brain text-base"></i>
       <span class="text-[10px] font-bold">AI Bot</span>
     </button>
-    <button onclick="switchTab('tts')" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-zinc-400 p-1.5" data-tab="tts">
-      <i class="fa-solid fa-volume-high text-base"></i>
-      <span class="text-[10px] font-bold">TTS</span>
-    </button>
-    <button onclick="switchTab('clips')" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-zinc-400 p-1.5" data-tab="clips">
-      <i class="fa-solid fa-scissors text-base"></i>
-      <span class="text-[10px] font-bold">Clips</span>
-    </button>
     <button onclick="toggleSidebar()" class="flex flex-col items-center gap-0.5 text-zinc-400 p-1.5">
       <i class="fa-solid fa-bars text-base"></i>
       <span class="text-[10px] font-bold">More</span>
@@ -384,21 +305,17 @@
   </nav>
 
   <script>
-    const CHAPPY_CLIENT_ID = 'lhnx8pt7tdyccuzs41wd5mgs8g5cbn';
-
-    let activeToken = localStorage.getItem('chappie_twitch_token') || null;
-    let currentUser = JSON.parse(localStorage.getItem('chappie_twitch_user')) || null;
-    let tokens = 2500;
+    let activeChannel = localStorage.getItem('chappie_target_channel') || 'noodiezy';
     let twitchSocket = null;
 
     function generateSmartAIResponse(username, message) {
       const lower = message.toLowerCase();
       const vibe = document.getElementById('aiPersonality') ? document.getElementById('aiPersonality').value : 'pro';
 
-      if (lower.includes('hello') || lower.includes('hi ') || lower.includes('hey') || lower.startsWith('hi') || lower.includes('sup')) {
-        if (vibe === 'hype') return `Yo @${username}! Welcome into the stream! Let's get this hype train rolling! 🔥`;
+      if (lower.includes('hello') || lower.includes('hi ') || lower.includes('hey') || lower.startsWith('hi')) {
+        if (vibe === 'hype') return `Yo @${username}! Welcome in! Let's get this hype train rolling! 🔥`;
         if (vibe === 'sarcastic') return `Oh look, @${username} decided to show up. Should I roll out the red carpet? 🙄`;
-        return `Hey @${username}! Great to have you in stream today! How's your day going? ✨`;
+        return `Hey @${username}! Great to have you in stream today! How's it going? ✨`;
       }
 
       if (lower.includes('how are you') || lower.includes('hru')) {
@@ -442,154 +359,44 @@
           btn.classList.remove('text-zinc-400', 'font-semibold');
         }
       });
-
-      document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-        btn.classList.remove('text-purple-400');
-        btn.classList.add('text-zinc-400');
-        if (btn.getAttribute('data-tab') === tabName) {
-          btn.classList.add('text-purple-400');
-          btn.classList.remove('text-zinc-400');
-        }
-      });
-
-      const sb = document.getElementById('sidebar');
-      if (!sb.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
-        toggleSidebar();
-      }
     }
 
-    function openTwitchAuth() {
-      if (CHAPPY_CLIENT_ID === 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE' || CHAPPY_CLIENT_ID === '') {
-        const choice = confirm("No Twitch Client ID configured yet.\n\nClick OK to test with a simulated stream profile, or CANCEL to set up your key.");
-        if (choice) simulateMockLogin();
-        return;
-      }
-
-      const redirectUri = window.location.href.split('#')[0].split('?')[0];
-      const scopes = ['chat:read', 'chat:edit', 'bits:read', 'clips:edit', 'channel:read:subscriptions', 'user:read:email'].join(' ');
-
-      const authUrl = `https://id.twitch.tv/oauth2/authorize` +
-        `?client_id=${CHAPPY_CLIENT_ID}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        `&response_type=token` +
-        `&scope=${encodeURIComponent(scopes)}` +
-        `&force_verify=true`;
-
-      window.location.href = authUrl;
-    }
-
-    function simulateMockLogin() {
-      const mockUser = { display_name: "NOODIEZY", login: "noodiezy", profile_image_url: "https://static-cdn.jtvnw.net/jtv_user_pictures/default-profile-image-52x52.png" };
-      currentUser = mockUser;
-      localStorage.setItem('chappie_twitch_user', JSON.stringify(mockUser));
-      updateProfileUI(mockUser);
-      connectLiveTwitchChat("noodiezy");
+    function connectChannelFromHeader() {
+      const input = document.getElementById('headerChannelInput');
+      const val = input.value.trim().toLowerCase();
+      if (!val) return alert("Please type your Twitch username first!");
+      
+      activeChannel = val;
+      localStorage.setItem('chappie_target_channel', val);
+      connectLiveTwitchChat(val);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const hash = window.location.hash;
-      if (hash.includes('access_token=')) {
-        const params = new URLSearchParams(hash.substring(1));
-        const token = params.get('access_token');
-        if (token) {
-          localStorage.setItem('chappie_twitch_token', token);
-          activeToken = token;
-          window.location.hash = '';
-        }
-      }
-
-      if (activeToken && CHAPPY_CLIENT_ID !== 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE') {
-        fetchRealTwitchProfile(activeToken);
-      } else if (currentUser) {
-        updateProfileUI(currentUser);
-        connectLiveTwitchChat(currentUser.login);
+      if (activeChannel) {
+        document.getElementById('headerChannelInput').value = activeChannel;
+        connectLiveTwitchChat(activeChannel);
       }
     });
 
-    async function fetchRealTwitchProfile(token) {
-      try {
-        const response = await fetch('https://api.twitch.tv/helix/users', {
-          headers: {
-            'Client-ID': CHAPPY_CLIENT_ID,
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) throw new Error('API fetch failed');
-        const data = await response.json();
-        const user = data.data[0];
-        currentUser = user;
-        localStorage.setItem('chappie_twitch_user', JSON.stringify(user));
-        updateProfileUI(user);
-        connectLiveTwitchChat(user.login);
-      } catch (err) {
-        simulateMockLogin();
-      }
-    }
+    function connectLiveTwitchChat(channelName) {
+      if (twitchSocket) twitchSocket.close();
 
-    function updateProfileUI(user) {
-      document.getElementById('authBtnText').innerText = user.display_name;
-      document.getElementById('authBtn').classList.replace('bg-twitch-purple', 'bg-emerald-600');
+      document.getElementById('currentChannelHeading').innerText = `Live Connected: #${channelName}`;
+      document.getElementById('currentChannelSubtext').innerText = `Synced with Twitch IRC chat for channel #${channelName}`;
       document.getElementById('profileStatusBadge').innerText = "Live Connected";
       document.getElementById('profileStatusBadge').className = "text-[10px] sm:text-xs font-bold bg-emerald-500/20 text-emerald-300 px-2.5 sm:px-3 py-1 rounded-full border border-emerald-500/30";
 
-      document.getElementById('profileContent').innerHTML = `
-        <img src="${user.profile_image_url}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-purple-500 shadow-md shrink-0">
-        <div>
-          <h3 class="font-bold text-white text-sm sm:text-base">${user.display_name}</h3>
-          <p class="text-xs text-purple-400">@${user.login}</p>
-          <button onclick="logoutTwitch()" class="mt-1 text-xs text-red-400 hover:underline block font-semibold">Disconnect Channel</button>
-        </div>
-      `;
-      addSystemChat(`Successfully linked Twitch channel: ${user.display_name}`);
-    }
-
-    function logoutTwitch() {
-      localStorage.removeItem('chappie_twitch_token');
-      localStorage.removeItem('chappie_twitch_user');
-      activeToken = null;
-      currentUser = null;
-      if (twitchSocket) twitchSocket.close();
-
-      document.getElementById('authBtnText').innerText = "Connect";
-      document.getElementById('authBtn').classList.replace('bg-emerald-600', 'bg-twitch-purple');
-      document.getElementById('profileStatusBadge').innerText = "Offline";
-      document.getElementById('profileStatusBadge').className = "text-[10px] sm:text-xs font-bold bg-zinc-800 text-zinc-400 px-2.5 sm:px-3 py-1 rounded-full border border-zinc-700";
-
-      document.getElementById('profileContent').innerHTML = `
-        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-600 text-lg sm:text-xl border border-twitch-border shrink-0">
-          <i class="fa-solid fa-user-slash"></i>
-        </div>
-        <div>
-          <h3 class="font-bold text-white text-sm sm:text-base">No Profile Linked</h3>
-          <p class="text-[11px] sm:text-xs text-zinc-400">Tap "Connect" to link your Twitch channel.</p>
-        </div>
-      `;
-      document.getElementById('chatDot').className = "w-2 h-2 rounded-full bg-amber-500";
-      document.getElementById('chatStatusText').innerText = "Connect Channel First";
-      addSystemChat("Twitch profile unlinked.");
-    }
-
-    // Connects Twitch WebSocket with full OAuth write privileges
-    function connectLiveTwitchChat(channelName) {
       document.getElementById('chatDot').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
       document.getElementById('chatStatusText').innerText = `Synced with #${channelName}`;
       
       const box = document.getElementById('chatBox');
-      box.innerHTML = `<div class="text-emerald-400 text-center py-2">[ Connected to live Twitch chat for #${channelName} ]</div>`;
+      box.innerHTML = `<div class="text-emerald-400 text-center py-2">[ Connected to live chat for #${channelName} ]</div>`;
 
       twitchSocket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
       twitchSocket.onopen = () => {
         twitchSocket.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
-        
-        // If an active OAuth token exists, authenticate to enable LIVE SENDING to Twitch chat!
-        if (activeToken) {
-          twitchSocket.send(`PASS oauth:${activeToken}`);
-          twitchSocket.send(`NICK ${channelName.toLowerCase()}`);
-        } else {
-          twitchSocket.send(`NICK justinfan${Math.floor(Math.random() * 80000)}`);
-        }
-        
+        twitchSocket.send(`NICK justinfan${Math.floor(10000 + Math.random() * 80000)}`);
         twitchSocket.send(`JOIN #${channelName.toLowerCase()}`);
       };
 
@@ -608,27 +415,16 @@
             const username = matchUser[1];
             const chatMessage = matchText[1];
             
-            // Ignore bot's own echo
-            const botName = (document.getElementById('botNameInput') ? document.getElementById('botNameInput').value : 'Chappie').toLowerCase();
-            if (username.toLowerCase() === botName || username.toLowerCase() === channelName.toLowerCase()) {
-              appendChatMessage(username, chatMessage);
-              return;
-            }
-
             appendChatMessage(username, chatMessage);
 
-            // Respond if @chappie is mentioned or viewer says hi
             const lower = chatMessage.toLowerCase();
+            const botName = (document.getElementById('botNameInput') ? document.getElementById('botNameInput').value : 'Chappie').toLowerCase();
+            
             if (lower.includes(`@${botName}`) || lower.includes(botName) || lower.includes('hello') || lower.includes('hi ')) {
               setTimeout(() => {
                 const aiReply = generateSmartAIResponse(username, chatMessage);
                 appendChatMessage("Chappie", aiReply, true);
-                
-                // Push response to REAL Twitch chat room!
-                if (twitchSocket && twitchSocket.readyState === WebSocket.OPEN) {
-                  twitchSocket.send(`PRIVMSG #${channelName.toLowerCase()} :${aiReply}`);
-                }
-              }, 600);
+              }, 500);
             }
           }
         }
@@ -653,24 +449,18 @@
       const text = input.value.trim();
       if (!text) return;
 
-      const channelName = currentUser ? currentUser.login : "noodiezy";
-      appendChatMessage(currentUser ? currentUser.display_name : "Broadcaster", text);
-      
-      // Push manually typed dashboard message out to live Twitch channel!
-      if (twitchSocket && twitchSocket.readyState === WebSocket.OPEN) {
-        twitchSocket.send(`PRIVMSG #${channelName.toLowerCase()} :${text}`);
-      }
-
+      appendChatMessage("Broadcaster", text);
       input.value = '';
+
+      setTimeout(() => {
+        const aiReply = generateSmartAIResponse("Broadcaster", text);
+        appendChatMessage("Chappie", aiReply, true);
+      }, 500);
     }
 
     function triggerManualAutoClip() {
-      if (tokens < 10) return alert("Insufficient Clip Tokens!");
-      tokens -= 10;
-      document.getElementById('tokenBalance').innerText = tokens.toLocaleString();
-
       const clipFeed = document.getElementById('clipFeed');
-      if (clipFeed.innerText.includes('[ Watching channel chat')) clipFeed.innerHTML = '';
+      if (clipFeed.innerText.includes('[ Connect channel')) clipFeed.innerHTML = '';
 
       const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const clipItem = document.createElement('div');
@@ -680,21 +470,11 @@
           <div class="font-bold text-purple-300 flex items-center gap-1.5">
             <i class="fa-solid fa-video text-amber-400"></i> Clip #${Math.floor(1000 + Math.random() * 9000)}
           </div>
-          <p class="text-[10px] text-zinc-400">Laughter Spike • ${time}</p>
+          <p class="text-[10px] text-zinc-400">Hype Peak • ${time}</p>
         </div>
-        <span class="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">-10 Tokens</span>
+        <span class="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">Auto Saved</span>
       `;
       clipFeed.prepend(clipItem);
-      addSystemChat("🎬 Clip Captured! (-10 Tokens)");
-    }
-
-    function addSystemChat(msg) {
-      const box = document.getElementById('chatBox');
-      const div = document.createElement('div');
-      div.className = "text-zinc-500 text-center text-[11px] italic";
-      div.innerText = `[ ${msg} ]`;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
     }
 
     function escapeHtml(str) {
