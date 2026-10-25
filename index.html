@@ -51,7 +51,7 @@
       <div>
         <div class="flex items-center gap-1.5">
           <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white leading-none">Chappie</h1>
-          <span class="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">v5.0 Live Chat</span>
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">v6.0 AI Interactive</span>
         </div>
         <p class="text-[11px] text-zinc-400 mt-0.5 hidden sm:block">AI Stream Bot & Creator Suite</p>
       </div>
@@ -145,8 +145,8 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div class="bg-twitch-card p-3.5 rounded-xl border border-twitch-border flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-white block">AI Auto-Chat</span>
-                <span class="text-[10px] text-zinc-400">Responds to !chappy</span>
+                <span class="text-xs font-bold text-white block">AI Auto-Chat (@chappie)</span>
+                <span class="text-[10px] text-zinc-400">Responds interactively</span>
               </div>
               <input type="checkbox" checked class="accent-purple-600 w-5 h-5 cursor-pointer">
             </div>
@@ -184,26 +184,26 @@
         <!-- TAB 2: AI & PERSONALITY -->
         <section id="tab-ai" class="tab-content space-y-4 hidden">
           <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
-            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">AI Persona & Brain Controls</h3>
+            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">AI Persona & Conversation Controls</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label class="text-xs font-semibold text-zinc-300 block mb-1">Bot Display Name</label>
                 <input type="text" value="Chappie" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white">
               </div>
               <div>
-                <label class="text-xs font-semibold text-zinc-300 block mb-1">Personality Preset</label>
-                <select class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-zinc-200">
-                  <option>Hype & Energetic Gamer</option>
-                  <option>Sarcastic Moderator</option>
-                  <option>Helpful Stream Assistant</option>
+                <label class="text-xs font-semibold text-zinc-300 block mb-1">Conversation Vibe</label>
+                <select id="aiPersonality" class="w-full bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-zinc-200">
+                  <option value="hype">Hype & Energetic Gamer</option>
+                  <option value="sarcastic">Sarcastic & Witty Roaster</option>
+                  <option value="friendly">Helpful & Wholesome Assistant</option>
                 </select>
               </div>
             </div>
             <div>
               <label class="text-xs font-semibold text-zinc-300 block mb-1">System Prompt Instructions</label>
-              <textarea rows="4" class="w-full bg-zinc-950 border border-twitch-border rounded-xl p-3 text-xs text-zinc-200 leading-relaxed">You are Chappie, an AI assistant built for Twitch streamers. Answer viewer questions with enthusiasm, tell jokes when asked, and keep the stream chat lively!</textarea>
+              <textarea rows="4" class="w-full bg-zinc-950 border border-twitch-border rounded-xl p-3 text-xs text-zinc-200 leading-relaxed">You are Chappie, a witty AI bot for Twitch chat. When viewers @chappie, reply with hilarious banter, gaming jokes, and keep the conversation super entertaining!</textarea>
             </div>
-            <button onclick="alert('AI Settings Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save AI Settings</button>
+            <button onclick="alert('AI Conversation Settings Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save AI Settings</button>
           </div>
         </section>
 
@@ -331,28 +331,28 @@
 
       </div>
 
-      <!-- Right Column: Live Twitch Chat Feed (Connected to real Twitch IRC WebSocket) -->
+      <!-- Right Column: Live Twitch Chat Feed with @Chappie AI Conversational Intelligence -->
       <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-lg flex flex-col justify-between h-[480px] sm:h-[520px]">
         <div>
           <div class="flex items-center justify-between border-b border-twitch-border pb-3 mb-3">
             <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
-              <i class="fa-solid fa-satellite-dish text-emerald-400"></i> Live Twitch Chat
+              <i class="fa-solid fa-satellite-dish text-emerald-400"></i> Live Twitch Chat & @Chappie AI
             </h3>
             <span id="chatStatusBadge" class="text-xs text-zinc-500 flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-amber-500" id="chatDot"></span> <span id="chatStatusText">Connect Channel First</span>
             </span>
           </div>
           <div id="chatBox" class="bg-zinc-950 border border-twitch-border rounded-xl p-3 space-y-3 h-72 sm:h-80 overflow-y-auto custom-scrollbar text-xs">
-            <div class="text-zinc-500 text-center py-4">[ Connect your Twitch profile above to sync live chat messages ]</div>
+            <div class="text-zinc-500 text-center py-4">[ Connect your Twitch profile above to sync live chat and test @chappie ]</div>
           </div>
         </div>
 
         <div class="mt-3 space-y-2">
           <div class="flex gap-2">
-            <input type="text" id="chatInput" placeholder="Type message as Chappie..." class="flex-1 bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple" onkeypress="if(event.key==='Enter') sendTwitchMessage()">
+            <input type="text" id="chatInput" placeholder="Type message or @chappie..." class="flex-1 bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple" onkeypress="if(event.key==='Enter') sendTwitchMessage()">
             <input type="number" id="bitsInput" value="0" min="0" placeholder="Bits" class="w-16 sm:w-20 bg-zinc-950 border border-twitch-border rounded-xl px-2 py-2.5 text-xs text-amber-400 font-bold text-center focus:outline-none focus:border-amber-500" title="Cheer Bits">
           </div>
-          <button onclick="sendTwitchMessage()" class="w-full bg-twitch-purple hover:bg-twitch-hover active:scale-98 py-2.5 rounded-xl text-xs font-bold text-white transition">Send to Twitch Chat</button>
+          <button onclick="sendTwitchMessage()" class="w-full bg-twitch-purple hover:bg-twitch-hover active:scale-98 py-2.5 rounded-xl text-xs font-bold text-white transition">Send Message</button>
         </div>
       </div>
 
@@ -384,12 +384,34 @@
   </nav>
 
   <script>
-    const CHAPPY_CLIENT_ID = 'lhnx8pt7tdyccuzs41wd5mgs8g5cbn';
+    const CHAPPY_CLIENT_ID = lhnx8pt7tdyccuzs41wd5mgs8g5cbn';
 
     let activeToken = localStorage.getItem('chappie_twitch_token') || null;
     let currentUser = JSON.parse(localStorage.getItem('chappie_twitch_user')) || null;
     let tokens = 2500;
     let twitchSocket = null;
+
+    // Interactive AI Conversational Responses
+    const aiResponses = {
+      hype: [
+        "LETS GOOO! That's the kind of energy we need in here today! 🔥",
+        "Absolute W take right there! You're gaming out of your mind!",
+        "SHEEEESH! Someone clip that moment right now! 🚀",
+        "Bro is playing in 3000 IQ mode today!"
+      ],
+      sarcastic: [
+        "Oh wow, another genius idea. Should I clap or take notes? 🙄",
+        "Sure, blame the gaming chair. Classic move.",
+        "Your keyboard called, it asked if you know how to press buttons gently.",
+        "Keep talking like that and I'll mute you in real life 💀"
+      ],
+      friendly: [
+        "I appreciate you being here in chat today! You're awesome! 💜",
+        "That's super interesting! What made you think of that?",
+        "Always happy to help out around here! How's your day going?",
+        "Sending good vibes to your chat stream today! ✨"
+      ]
+    };
 
     const jokes = [
       "Why did the gamer bring a ladder to the stream? To reach the high scores!",
@@ -439,7 +461,6 @@
       }
     }
 
-    // Direct in-page login redirect (Prevents small popup window trapping)
     function openTwitchAuth() {
       if (CHAPPY_CLIENT_ID === 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE' || CHAPPY_CLIENT_ID === '') {
         const choice = confirm("No Twitch Client ID configured yet.\n\nClick OK to simulate connection, or CANCEL to insert your Client ID.");
@@ -457,7 +478,7 @@
         `&scope=${encodeURIComponent(scopes)}` +
         `&force_verify=true`;
 
-      window.location.href = authUrl; // Direct redirect to prevent iframe/popup blocking
+      window.location.href = authUrl;
     }
 
     function simulateMockLogin() {
@@ -551,7 +572,6 @@
       addSystemChat("Twitch profile unlinked.");
     }
 
-    // Connects to Twitch's Public Live IRC Chat WebSocket
     function connectLiveTwitchChat(channelName) {
       document.getElementById('chatDot').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
       document.getElementById('chatStatusText').innerText = `Synced with #${channelName}`;
@@ -559,7 +579,6 @@
       const box = document.getElementById('chatBox');
       box.innerHTML = `<div class="text-emerald-400 text-center py-2">[ Connected to live Twitch chat for #${channelName} ]</div>`;
 
-      // Connects to anonymous Twitch IRC WebSocket
       twitchSocket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
       twitchSocket.onopen = () => {
@@ -570,12 +589,11 @@
 
       twitchSocket.onmessage = (event) => {
         const message = event.data;
-        if (message.startsWith('PING')) {
+        if (message.includes('PING')) {
           twitchSocket.send('PONG :tmi.twitch.tv');
           return;
         }
 
-        // Parse Twitch IRC messages
         if (message.includes('PRIVMSG')) {
           const matchUser = message.match(/:([a-zA-Z0-9_]+)!/);
           const matchText = message.match(/PRIVMSG #[a-zA-Z0-9_]+ :(.+)/);
@@ -585,18 +603,36 @@
             const chatMessage = matchText[1];
             appendChatMessage(username, chatMessage);
 
-            // Bot Auto-Response to !joke or !chappy
-            const lower = chatMessage.toLowerCase();
-            if (lower.includes('!joke')) {
-              appendChatMessage("ChappieBot", jokes[Math.floor(Math.random() * jokes.length)], true);
-            }
+            processChappieAI(username, chatMessage);
           }
         }
       };
 
       twitchSocket.onerror = () => {
-        addSystemChat("Warning: Live WebSocket connection error. Running in sandbox mode.");
+        addSystemChat("Warning: Live WebSocket connection error. Running in interactive sandbox mode.");
       };
+    }
+
+    // AI Conversational Intelligence Engine for @chappie mentions
+    function processChappieAI(username, chatMessage) {
+      const lower = chatMessage.toLowerCase();
+      
+      // Check if viewer mentioned @chappie or asked a question
+      if (lower.includes('@chappie') || lower.includes('chappie')) {
+        setTimeout(() => {
+          const vibe = document.getElementById('aiPersonality').value || 'hype';
+          const pool = aiResponses[vibe] || aiResponses['hype'];
+          const randomReply = pool[Math.floor(Math.random() * pool.length)];
+          
+          // Personalize response slightly
+          const personalizedReply = `@${username} ${randomReply}`;
+          appendChatMessage("Chappie", personalizedReply, true);
+        }, 600);
+      } else if (lower.includes('!joke')) {
+        setTimeout(() => {
+          appendChatMessage("Chappie", `@${username} ${jokes[Math.floor(Math.random() * jokes.length)]}`, true);
+        }, 500);
+      }
     }
 
     function appendChatMessage(user, text, isBot = false) {
@@ -617,16 +653,12 @@
       const text = input.value.trim();
       if (!text) return;
 
-      appendChatMessage(currentUser ? currentUser.display_name : "Broadcaster", text);
+      const senderName = currentUser ? currentUser.display_name : "Broadcaster";
+      appendChatMessage(senderName, text);
       input.value = '';
 
-      // If connected via WebSocket, you could send message back, otherwise simulated response
-      const lower = text.toLowerCase();
-      if (lower.includes('!joke')) {
-        setTimeout(() => {
-          appendChatMessage("ChappieBot", jokes[Math.floor(Math.random() * jokes.length)], true);
-        }, 400);
-      }
+      // Trigger interactive AI response if testing locally in sandbox
+      processChappieAI(senderName, text);
     }
 
     function triggerManualAutoClip() {
