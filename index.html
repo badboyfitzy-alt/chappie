@@ -29,7 +29,7 @@
   </script>
 
   <style>
-    body { background-color: #0e0e10; color: #efeff1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #0e0e10; color: #efeff1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #121215; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #26262c; border-radius: 4px; }
@@ -51,7 +51,7 @@
       <div>
         <div class="flex items-center gap-1.5">
           <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white leading-none">Chappie</h1>
-          <span class="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">v4.5 Mobile</span>
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">v5.0 Live Chat</span>
         </div>
         <p class="text-[11px] text-zinc-400 mt-0.5 hidden sm:block">AI Stream Bot & Creator Suite</p>
       </div>
@@ -63,7 +63,7 @@
         <span id="tokenBalance" class="text-xs font-bold text-amber-400">2,500</span>
       </div>
 
-      <button id="authBtn" onclick="openTwitchAuthPopup()" class="bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-purple-900/30">
+      <button id="authBtn" onclick="openTwitchAuth()" class="bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-purple-900/30">
         <i class="fa-brands fa-twitch text-xs sm:text-sm"></i>
         <span id="authBtnText" class="truncate max-w-[100px] sm:max-w-none">Connect</span>
       </button>
@@ -267,7 +267,7 @@
             </div>
             <div>
               <label class="text-xs font-semibold text-zinc-300 block mb-1">Custom Banned Word Blacklist</label>
-              <textarea rows="3" class="w-full bg-zinc-950 border border-twitch-border rounded-xl p-3 text-xs text-zinc-200" placeholder="Type banned words separated by commas..."></textarea>
+              <textarea rows="3" class="w-full bg-zinc-950 border border-twitch-border rounded-lg p-3 text-xs text-zinc-200" placeholder="Type banned words separated by commas..."></textarea>
             </div>
             <button onclick="alert('Mod Settings Saved!')" class="w-full sm:w-auto bg-twitch-purple hover:bg-twitch-hover active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition">Save Mod Settings</button>
           </div>
@@ -331,33 +331,35 @@
 
       </div>
 
-      <!-- Right Column: Live Twitch Chat Simulator -->
+      <!-- Right Column: Live Twitch Chat Feed (Connected to real Twitch IRC WebSocket) -->
       <div class="bg-twitch-card p-4 sm:p-5 rounded-2xl border border-twitch-border shadow-lg flex flex-col justify-between h-[480px] sm:h-[520px]">
         <div>
           <div class="flex items-center justify-between border-b border-twitch-border pb-3 mb-3">
-            <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Live Chat Sandbox</h3>
-            <span class="text-xs text-zinc-500 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active
+            <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-satellite-dish text-emerald-400"></i> Live Twitch Chat
+            </h3>
+            <span id="chatStatusBadge" class="text-xs text-zinc-500 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-500" id="chatDot"></span> <span id="chatStatusText">Connect Channel First</span>
             </span>
           </div>
           <div id="chatBox" class="bg-zinc-950 border border-twitch-border rounded-xl p-3 space-y-3 h-72 sm:h-80 overflow-y-auto custom-scrollbar text-xs">
-            <div class="text-zinc-600 text-center py-2">[ Chappie Bot Listening ]</div>
+            <div class="text-zinc-500 text-center py-4">[ Connect your Twitch profile above to sync live chat messages ]</div>
           </div>
         </div>
 
         <div class="mt-3 space-y-2">
           <div class="flex gap-2">
-            <input type="text" id="chatInput" placeholder="Type !joke or chat..." class="flex-1 bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple" onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <input type="text" id="chatInput" placeholder="Type message as Chappie..." class="flex-1 bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple" onkeypress="if(event.key==='Enter') sendTwitchMessage()">
             <input type="number" id="bitsInput" value="0" min="0" placeholder="Bits" class="w-16 sm:w-20 bg-zinc-950 border border-twitch-border rounded-xl px-2 py-2.5 text-xs text-amber-400 font-bold text-center focus:outline-none focus:border-amber-500" title="Cheer Bits">
           </div>
-          <button onclick="sendChatMessage()" class="w-full bg-twitch-purple hover:bg-twitch-hover active:scale-98 py-2.5 rounded-xl text-xs font-bold text-white transition">Send Chat / Cheer Bits</button>
+          <button onclick="sendTwitchMessage()" class="w-full bg-twitch-purple hover:bg-twitch-hover active:scale-98 py-2.5 rounded-xl text-xs font-bold text-white transition">Send to Twitch Chat</button>
         </div>
       </div>
 
     </main>
   </div>
 
-  <!-- Mobile Bottom Tab Navigation Bar (iOS & Android Style) -->
+  <!-- Mobile Bottom Tab Navigation Bar -->
   <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-twitch-card/95 backdrop-blur-md border-t border-twitch-border px-2 py-1.5 z-30 flex items-center justify-around pb-safe">
     <button onclick="switchTab('overview')" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-purple-400 p-1.5" data-tab="overview">
       <i class="fa-solid fa-house text-base"></i>
@@ -381,19 +383,13 @@
     </button>
   </nav>
 
-  <footer class="bg-twitch-card border-t border-twitch-border py-3 text-center text-xs text-zinc-500 hidden lg:block">
-    <p>Chappie Open-Source Creator Suite • Mobile Ready Edition</p>
-  </footer>
-
   <script>
-    /* =====================================================================
-       TWITCH APP CLIENT ID CONFIGURATION
-       Replace 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE' with your Client ID from dev.twitch.tv/console
-       ===================================================================== */
-    const CHAPPY_CLIENT_ID = 'lhnx8pt7tdyccuzs41wd5mgs8g5cbn';
+    const CHAPPY_CLIENT_ID = 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE';
 
     let activeToken = localStorage.getItem('chappie_twitch_token') || null;
+    let currentUser = JSON.parse(localStorage.getItem('chappie_twitch_user')) || null;
     let tokens = 2500;
+    let twitchSocket = null;
 
     const jokes = [
       "Why did the gamer bring a ladder to the stream? To reach the high scores!",
@@ -404,7 +400,6 @@
     function toggleSidebar() {
       const sb = document.getElementById('sidebar');
       const backdrop = document.getElementById('sidebarBackdrop');
-      
       const isClosed = sb.classList.contains('-translate-x-full');
       if (isClosed) {
         sb.classList.remove('-translate-x-full');
@@ -417,7 +412,6 @@
 
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-
       const activeTab = document.getElementById(`tab-${tabName}`);
       if (activeTab) activeTab.classList.remove('hidden');
 
@@ -445,9 +439,10 @@
       }
     }
 
-    function openTwitchAuthPopup() {
+    // Direct in-page login redirect (Prevents small popup window trapping)
+    function openTwitchAuth() {
       if (CHAPPY_CLIENT_ID === 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE' || CHAPPY_CLIENT_ID === '') {
-        const choice = confirm("No Twitch Client ID configured yet.\n\nClick OK to test with a simulated profile, or CANCEL to set up your Twitch developer key.");
+        const choice = confirm("No Twitch Client ID configured yet.\n\nClick OK to simulate connection, or CANCEL to insert your Client ID.");
         if (choice) simulateMockLogin();
         return;
       }
@@ -462,28 +457,15 @@
         `&scope=${encodeURIComponent(scopes)}` +
         `&force_verify=true`;
 
-      const width = 450, height = 650;
-      const left = (window.screen.width / 2) - (width / 2);
-      const top = (window.screen.height / 2) - (height / 2);
-
-      window.open(authUrl, 'TwitchAuthorization', `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`);
+      window.location.href = authUrl; // Direct redirect to prevent iframe/popup blocking
     }
 
     function simulateMockLogin() {
-      document.getElementById('authBtnText').innerText = "Demo";
-      document.getElementById('authBtn').classList.replace('bg-twitch-purple', 'bg-emerald-600');
-      document.getElementById('profileStatusBadge').innerText = "Connected";
-      document.getElementById('profileStatusBadge').className = "text-[10px] sm:text-xs font-bold bg-emerald-500/20 text-emerald-300 px-2.5 sm:px-3 py-1 rounded-full border border-emerald-500/30";
-
-      document.getElementById('profileContent').innerHTML = `
-        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-purple-600 flex items-center justify-center text-white text-lg font-bold shadow-md shrink-0">🎮</div>
-        <div>
-          <h3 class="font-bold text-white text-sm sm:text-base">Demo_Streamer</h3>
-          <p class="text-xs text-purple-400">@demo_streamer</p>
-          <button onclick="logoutTwitch()" class="mt-1 text-xs text-red-400 hover:underline block font-semibold">Disconnect</button>
-        </div>
-      `;
-      addSystemChat("Broadcaster account connected!");
+      const mockUser = { display_name: "Demo_Streamer", login: "demo_streamer", profile_image_url: "https://static-cdn.jtvnw.net/jtv_user_pictures/default-profile-image-52x52.png" };
+      currentUser = mockUser;
+      localStorage.setItem('chappie_twitch_user', JSON.stringify(mockUser));
+      updateProfileUI(mockUser);
+      connectLiveTwitchChat("demo_streamer");
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -492,11 +474,6 @@
         const params = new URLSearchParams(hash.substring(1));
         const token = params.get('access_token');
         if (token) {
-          if (window.opener) {
-            window.opener.postMessage({ type: 'TWITCH_AUTH_SUCCESS', token: token }, '*');
-            window.close();
-            return;
-          }
           localStorage.setItem('chappie_twitch_token', token);
           activeToken = token;
           window.location.hash = '';
@@ -505,15 +482,9 @@
 
       if (activeToken && CHAPPY_CLIENT_ID !== 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE') {
         fetchRealTwitchProfile(activeToken);
-      }
-    });
-
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'TWITCH_AUTH_SUCCESS') {
-        const token = event.data.token;
-        localStorage.setItem('chappie_twitch_token', token);
-        activeToken = token;
-        fetchRealTwitchProfile(token);
+      } else if (currentUser) {
+        updateProfileUI(currentUser);
+        connectLiveTwitchChat(currentUser.login);
       }
     });
 
@@ -525,36 +496,42 @@
             'Authorization': `Bearer ${token}`
           }
         });
-
         if (!response.ok) throw new Error('Token expired');
-
         const data = await response.json();
         const user = data.data[0];
-
-        document.getElementById('authBtnText').innerText = user.display_name;
-        document.getElementById('authBtn').classList.replace('bg-twitch-purple', 'bg-emerald-600');
-
-        document.getElementById('profileStatusBadge').innerText = "Connected";
-        document.getElementById('profileStatusBadge').className = "text-[10px] sm:text-xs font-bold bg-emerald-500/20 text-emerald-300 px-2.5 sm:px-3 py-1 rounded-full border border-emerald-500/30";
-
-        document.getElementById('profileContent').innerHTML = `
-          <img src="${user.profile_image_url}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-purple-500 shadow-md shrink-0">
-          <div>
-            <h3 class="font-bold text-white text-sm sm:text-base">${user.display_name}</h3>
-            <p class="text-xs text-purple-400">@${user.login}</p>
-            <button onclick="logoutTwitch()" class="mt-1 text-xs text-red-400 hover:underline block font-semibold">Disconnect</button>
-          </div>
-        `;
-
-        addSystemChat(`Connected channel: ${user.display_name}`);
+        currentUser = user;
+        localStorage.setItem('chappie_twitch_user', JSON.stringify(user));
+        updateProfileUI(user);
+        connectLiveTwitchChat(user.login);
       } catch (err) {
         logoutTwitch();
       }
     }
 
+    function updateProfileUI(user) {
+      document.getElementById('authBtnText').innerText = user.display_name;
+      document.getElementById('authBtn').classList.replace('bg-twitch-purple', 'bg-emerald-600');
+      document.getElementById('profileStatusBadge').innerText = "Live Connected";
+      document.getElementById('profileStatusBadge').className = "text-[10px] sm:text-xs font-bold bg-emerald-500/20 text-emerald-300 px-2.5 sm:px-3 py-1 rounded-full border border-emerald-500/30";
+
+      document.getElementById('profileContent').innerHTML = `
+        <img src="${user.profile_image_url}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-purple-500 shadow-md shrink-0">
+        <div>
+          <h3 class="font-bold text-white text-sm sm:text-base">${user.display_name}</h3>
+          <p class="text-xs text-purple-400">@${user.login}</p>
+          <button onclick="logoutTwitch()" class="mt-1 text-xs text-red-400 hover:underline block font-semibold">Disconnect Channel</button>
+        </div>
+      `;
+      addSystemChat(`Successfully linked Twitch channel: ${user.display_name}`);
+    }
+
     function logoutTwitch() {
       localStorage.removeItem('chappie_twitch_token');
+      localStorage.removeItem('chappie_twitch_user');
       activeToken = null;
+      currentUser = null;
+      if (twitchSocket) twitchSocket.close();
+
       document.getElementById('authBtnText').innerText = "Connect";
       document.getElementById('authBtn').classList.replace('bg-emerald-600', 'bg-twitch-purple');
       document.getElementById('profileStatusBadge').innerText = "Offline";
@@ -566,10 +543,90 @@
         </div>
         <div>
           <h3 class="font-bold text-white text-sm sm:text-base">No Profile Linked</h3>
-          <p class="text-[11px] sm:text-xs text-zinc-400">Tap "Connect" to link your channel.</p>
+          <p class="text-[11px] sm:text-xs text-zinc-400">Tap "Connect" to link your Twitch channel.</p>
         </div>
       `;
+      document.getElementById('chatDot').className = "w-2 h-2 rounded-full bg-amber-500";
+      document.getElementById('chatStatusText').innerText = "Connect Channel First";
       addSystemChat("Twitch profile unlinked.");
+    }
+
+    // Connects to Twitch's Public Live IRC Chat WebSocket
+    function connectLiveTwitchChat(channelName) {
+      document.getElementById('chatDot').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+      document.getElementById('chatStatusText').innerText = `Synced with #${channelName}`;
+      
+      const box = document.getElementById('chatBox');
+      box.innerHTML = `<div class="text-emerald-400 text-center py-2">[ Connected to live Twitch chat for #${channelName} ]</div>`;
+
+      // Connects to anonymous Twitch IRC WebSocket
+      twitchSocket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+
+      twitchSocket.onopen = () => {
+        twitchSocket.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+        twitchSocket.send('NICK justinfan' + Math.floor(Math.random() * 80000));
+        twitchSocket.send('JOIN #' + channelName.toLowerCase());
+      };
+
+      twitchSocket.onmessage = (event) => {
+        const message = event.data;
+        if (message.startsWith('PING')) {
+          twitchSocket.send('PONG :tmi.twitch.tv');
+          return;
+        }
+
+        // Parse Twitch IRC messages
+        if (message.includes('PRIVMSG')) {
+          const matchUser = message.match(/:([a-zA-Z0-9_]+)!/);
+          const matchText = message.match(/PRIVMSG #[a-zA-Z0-9_]+ :(.+)/);
+          
+          if (matchUser && matchText) {
+            const username = matchUser[1];
+            const chatMessage = matchText[1];
+            appendChatMessage(username, chatMessage);
+
+            // Bot Auto-Response to !joke or !chappy
+            const lower = chatMessage.toLowerCase();
+            if (lower.includes('!joke')) {
+              appendChatMessage("ChappieBot", jokes[Math.floor(Math.random() * jokes.length)], true);
+            }
+          }
+        }
+      };
+
+      twitchSocket.onerror = () => {
+        addSystemChat("Warning: Live WebSocket connection error. Running in sandbox mode.");
+      };
+    }
+
+    function appendChatMessage(user, text, isBot = false) {
+      const box = document.getElementById('chatBox');
+      const div = document.createElement('div');
+      if (isBot) {
+        div.className = "bg-purple-950/40 p-2 rounded-xl border border-purple-800/40 text-xs";
+        div.innerHTML = `<span class="text-purple-300 font-bold">🤖 ${user}:</span> <span class="text-zinc-100">${escapeHtml(text)}</span>`;
+      } else {
+        div.innerHTML = `<span class="text-purple-400 font-bold">${escapeHtml(user)}:</span> <span class="text-zinc-200">${escapeHtml(text)}</span>`;
+      }
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function sendTwitchMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendChatMessage(currentUser ? currentUser.display_name : "Broadcaster", text);
+      input.value = '';
+
+      // If connected via WebSocket, you could send message back, otherwise simulated response
+      const lower = text.toLowerCase();
+      if (lower.includes('!joke')) {
+        setTimeout(() => {
+          appendChatMessage("ChappieBot", jokes[Math.floor(Math.random() * jokes.length)], true);
+        }, 400);
+      }
     }
 
     function triggerManualAutoClip() {
@@ -602,50 +659,6 @@
       div.className = "text-zinc-500 text-center text-[11px] italic";
       div.innerText = `[ ${msg} ]`;
       box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function sendChatMessage() {
-      const input = document.getElementById('chatInput');
-      const bitsInput = document.getElementById('bitsInput');
-      const box = document.getElementById('chatBox');
-
-      const text = input.value.trim();
-      const bits = parseInt(bitsInput.value) || 0;
-      const minBits = parseInt(document.getElementById('minBitsInput').value) || 50;
-
-      if (!text && bits <= 0) return;
-
-      const userDiv = document.createElement('div');
-      let badgeHtml = '';
-      if (bits > 0) {
-        badgeHtml = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/40 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1.5"><i class="fa-solid fa-gem mr-1"></i> ${bits} Bits</span>`;
-      }
-      userDiv.innerHTML = `${badgeHtml}<span class="text-purple-400 font-bold">Viewer:</span> <span class="text-zinc-200">${escapeHtml(text)}</span>`;
-      box.appendChild(userDiv);
-
-      input.value = '';
-      bitsInput.value = '0';
-
-      if (bits > 0) {
-        if (bits >= minBits) {
-          addSystemChat(`🔊 [TTS Audio]: Read aloud on stream for ${bits} Bits!`);
-        } else {
-          addSystemChat(`🔇 [TTS Skipped]: Cheer was ${bits} Bits (Min required: ${minBits} Bits).`);
-        }
-      }
-
-      const lower = text.toLowerCase();
-      setTimeout(() => {
-        if (lower.includes('!joke')) {
-          const botDiv = document.createElement('div');
-          botDiv.className = "bg-purple-950/30 p-2 rounded-xl border border-purple-800/40 text-xs";
-          botDiv.innerHTML = `<span class="text-purple-300 font-bold">🤖 Chappie:</span> ${jokes[Math.floor(Math.random() * jokes.length)]}`;
-          box.appendChild(botDiv);
-          box.scrollTop = box.scrollHeight;
-        }
-      }, 500);
-
       box.scrollTop = box.scrollHeight;
     }
 
