@@ -50,7 +50,7 @@
       <div>
         <div class="flex items-center gap-2">
           <h1 class="font-extrabold text-lg tracking-tight text-white leading-none">Chappie</h1>
-          <span class="text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">v3.8 Production</span>
+          <span class="text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">v4.2 Production</span>
         </div>
         <p class="text-xs text-zinc-400 mt-0.5 hidden sm:block">AI Twitch Bot & Creator Suite</p>
       </div>
@@ -128,7 +128,7 @@
               </div>
               <div>
                 <h3 class="font-bold text-white text-base">No Broadcaster Profile Linked</h3>
-                <p class="text-xs text-zinc-400">Click "Connect Twitch Profile" to link your real channel.</p>
+                <p class="text-xs text-zinc-400">Click "Connect Twitch Profile" to link your channel to Chappie.</p>
               </div>
             </div>
             <span id="profileStatusBadge" class="text-xs font-bold bg-zinc-800 text-zinc-400 px-3 py-1 rounded-full border border-zinc-700">Offline</span>
@@ -354,7 +354,13 @@
   </footer>
 
   <script>
-    const CHAPPY_CLIENT_ID = 'YOUR_REGISTERED_TWITCH_CLIENT_ID_HERE';
+    /* =====================================================================
+       1. TWITCH APP CLIENT ID CONFIGURATION
+       To enable real Twitch account logins, replace 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE'
+       with your Client ID from dev.twitch.tv/console
+       ===================================================================== */
+    const CHAPPY_CLIENT_ID = 'lhnx8pt7tdyccuzs41wd5mgs8g5cbn';
+
     let activeToken = localStorage.getItem('chappie_twitch_token') || null;
     let tokens = 2500;
 
@@ -369,7 +375,6 @@
       sb.classList.toggle('hidden');
     }
 
-    // Sidebar tab switching function
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => {
         el.classList.add('hidden');
@@ -390,9 +395,13 @@
       });
     }
 
+    // Opens real Twitch OAuth Popup or Demo option if Key is unconfigured
     function openTwitchAuthPopup() {
-      if (CHAPPY_CLIENT_ID === 'YOUR_REGISTERED_TWITCH_CLIENT_ID_HERE') {
-        simulateMockLogin();
+      if (CHAPPY_CLIENT_ID === 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE' || CHAPPY_CLIENT_ID === '') {
+        const choice = confirm("No Twitch Client ID has been set in code yet.\n\nClick OK to test with a simulated profile, or CANCEL to set up your Twitch developer key.");
+        if (choice) {
+          simulateMockLogin();
+        }
         return;
       }
 
@@ -414,7 +423,7 @@
     }
 
     function simulateMockLogin() {
-      document.getElementById('authBtnText').innerText = "Connected: Streamer_TV";
+      document.getElementById('authBtnText').innerText = "Connected: Demo_Streamer";
       document.getElementById('authBtn').classList.replace('bg-twitch-purple', 'bg-emerald-600');
       document.getElementById('profileStatusBadge').innerText = "Connected";
       document.getElementById('profileStatusBadge').className = "text-xs font-bold bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30";
@@ -422,8 +431,9 @@
       document.getElementById('profileContent').innerHTML = `
         <div class="w-14 h-14 rounded-full bg-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-md">🎮</div>
         <div>
-          <h3 class="font-bold text-white text-base">Streamer_TV</h3>
-          <p class="text-xs text-purple-400">#prostreamer_tv</p>
+          <h3 class="font-bold text-white text-base">Demo_Streamer</h3>
+          <p class="text-xs text-purple-400">@demo_streamer</p>
+          <button onclick="logoutTwitch()" class="mt-1 text-xs text-red-400 hover:underline block font-semibold">Disconnect Channel</button>
         </div>
       `;
       addSystemChat("Broadcaster account connected to Chappie!");
@@ -446,7 +456,7 @@
         }
       }
 
-      if (activeToken && CHAPPY_CLIENT_ID !== 'YOUR_REGISTERED_TWITCH_CLIENT_ID_HERE') {
+      if (activeToken && CHAPPY_CLIENT_ID !== 'PASTE_YOUR_TWITCH_CLIENT_ID_HERE') {
         fetchRealTwitchProfile(activeToken);
       }
     });
@@ -485,13 +495,34 @@
           <div>
             <h3 class="font-bold text-white text-base">${user.display_name}</h3>
             <p class="text-xs text-purple-400">@${user.login}</p>
+            <button onclick="logoutTwitch()" class="mt-1 text-xs text-red-400 hover:underline block font-semibold">Disconnect Channel</button>
           </div>
         `;
 
-        addSystemChat(`Connected channel: ${user.display_name} (@${user.login})`);
+        addSystemChat(`Connected real Twitch channel: ${user.display_name} (@${user.login})`);
       } catch (err) {
-        simulateMockLogin();
+        logoutTwitch();
       }
+    }
+
+    function logoutTwitch() {
+      localStorage.removeItem('chappie_twitch_token');
+      activeToken = null;
+      document.getElementById('authBtnText').innerText = "Connect Twitch Profile";
+      document.getElementById('authBtn').classList.replace('bg-emerald-600', 'bg-twitch-purple');
+      document.getElementById('profileStatusBadge').innerText = "Offline";
+      document.getElementById('profileStatusBadge').className = "text-xs font-bold bg-zinc-800 text-zinc-400 px-3 py-1 rounded-full border border-zinc-700";
+
+      document.getElementById('profileContent').innerHTML = `
+        <div class="w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-600 text-xl border border-twitch-border">
+          <i class="fa-solid fa-user-slash"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-white text-base">No Broadcaster Profile Linked</h3>
+          <p class="text-xs text-zinc-400">Click "Connect Twitch Profile" to link your channel to Chappie.</p>
+        </div>
+      `;
+      addSystemChat("Twitch profile unlinked.");
     }
 
     function triggerManualAutoClip() {
