@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chappy — The Ultimate Twitch AI Assistant</title>
+  <title>Chappie — Universal AI Stream Bot & Creator Suite</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -27,7 +27,7 @@
       }
     }
   </script>
-  
+
   <style>
     body { background-color: #0e0e10; color: #efeff1; font-family: system-ui, -apple-system, sans-serif; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -39,322 +39,169 @@
 <body class="min-h-screen flex flex-col justify-between selection:bg-twitch-purple selection:text-white">
 
   <!-- Header -->
-  <header class="bg-twitch-card border-b border-twitch-border sticky top-0 z-50 px-4 lg:px-8 py-3.5 flex items-center justify-between shadow-lg">
+  <header class="bg-twitch-card border-b border-twitch-border sticky top-0 z-50 px-4 lg:px-6 py-3 flex items-center justify-between shadow-lg">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-twitch-purple to-twitch-accent flex items-center justify-center text-white text-xl font-bold shadow-md shadow-purple-900/40">
+      <button onclick="toggleSidebar()" class="lg:hidden text-zinc-400 hover:text-white text-lg pr-1">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-twitch-purple to-twitch-accent flex items-center justify-center text-white text-lg font-bold shadow-md shadow-purple-900/40">
         🤖
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <h1 class="font-extrabold text-lg tracking-tight text-white leading-none">Chappy</h1>
-          <span class="text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">Public Release</span>
+          <h1 class="font-extrabold text-lg tracking-tight text-white leading-none">Chappie</h1>
+          <span class="text-[10px] uppercase tracking-wider font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">v3.0 Public</span>
         </div>
-        <p class="text-xs text-zinc-400 mt-0.5 hidden sm:block">Universal Stream Assistant & AI Engine</p>
+        <p class="text-xs text-zinc-400 mt-0.5 hidden sm:block">AI Twitch Bot & Creator Suite</p>
       </div>
     </div>
 
-    <div class="flex items-center gap-3 sm:gap-4">
-      <div class="bg-zinc-900/90 border border-twitch-border px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-inner">
-        <i class="fa-solid fa-coins text-amber-400 text-sm"></i>
+    <div class="flex items-center gap-3">
+      <div class="bg-zinc-900 border border-twitch-border px-3 py-1.5 rounded-xl flex items-center gap-2">
+        <i class="fa-solid fa-coins text-amber-400 text-xs"></i>
         <span class="text-xs font-medium text-zinc-400 hidden sm:inline">Clip Tokens:</span>
-        <span id="tokenBalance" class="text-xs sm:text-sm font-bold text-amber-400">2,500</span>
+        <span id="tokenBalance" class="text-xs font-bold text-amber-400">2,500</span>
       </div>
 
-      <!-- One-Click Twitch Auth -->
-      <button id="authBtn" onclick="openTwitchAuthPopup()" class="bg-twitch-purple hover:bg-twitch-hover text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition duration-200 flex items-center gap-2 shadow-md shadow-purple-900/30">
-        <i class="fa-brands fa-twitch text-base"></i>
-        <span id="authBtnText">Connect with Twitch</span>
+      <button id="authBtn" onclick="openTwitchAuthPopup()" class="bg-twitch-purple hover:bg-twitch-hover text-white px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md shadow-purple-900/30">
+        <i class="fa-brands fa-twitch text-sm"></i>
+        <span id="authBtnText">Connect Twitch Profile</span>
       </button>
     </div>
   </header>
 
-  <!-- Main Public Dashboard -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Main Body Layout with Sidebar -->
+  <div class="flex-1 flex max-w-[1600px] w-full mx-auto">
 
-    <!-- Column 1: Broadcaster Profile -->
-    <div class="space-y-6">
-      <div class="bg-twitch-card p-5 rounded-2xl border border-twitch-border shadow-lg">
-        <div class="flex items-center justify-between border-b border-twitch-border pb-3 mb-4">
-          <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Streamer Profile</h2>
-          <span id="profileStatusBadge" class="text-[10px] font-bold bg-zinc-800 text-zinc-400 px-2.5 py-0.5 rounded-full border border-zinc-700">Not Connected</span>
-        </div>
+    <!-- Navigation Sidebar -->
+    <aside id="sidebar" class="w-64 bg-twitch-card border-r border-twitch-border p-4 flex flex-col justify-between hidden lg:flex shrink-0">
+      <div class="space-y-1">
+        <p class="text-[10px] uppercase font-bold text-zinc-500 px-3 mb-2 tracking-wider">Dashboard Navigation</p>
         
-        <div id="profileContent" class="text-center py-6">
-          <div class="w-16 h-16 rounded-full bg-zinc-900 mx-auto flex items-center justify-center text-zinc-600 text-2xl mb-3 border border-twitch-border">
-            <i class="fa-solid fa-user-slash"></i>
+        <button onclick="switchTab('overview')" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-white bg-twitch-purple/20 border border-twitch-purple/40">
+          <i class="fa-solid fa-house w-4 text-purple-400"></i> Overview
+        </button>
+        <button onclick="switchTab('ai')" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 transition">
+          <i class="fa-solid fa-brain w-4 text-zinc-400"></i> AI & Personality
+        </button>
+        <button onclick="switchTab('tts')" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 transition">
+          <i class="fa-solid fa-volume-high w-4 text-zinc-400"></i> Bits TTS Reader
+        </button>
+        <button onclick="switchTab('clips')" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 transition">
+          <i class="fa-solid fa-scissors w-4 text-zinc-400"></i> Auto Clip Hunter
+        </button>
+        <button onclick="switchTab('automod')" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 transition">
+          <i class="fa-solid fa-shield-halved w-4 text-zinc-400"></i> Auto-Moderation
+        </button>
+        <button onclick="switchTab('timers')" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 transition">
+          <i class="fa-solid fa-clock w-4 text-zinc-400"></i> Scheduled Timers
+        </button>
+        <button onclick="switchTab('economy')" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 transition">
+          <i class="fa-solid fa-gem w-4 text-zinc-400"></i> Loyalty Points
+        </button>
+        <button onclick="switchTab('overlays')" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 transition">
+          <i class="fa-solid fa-desktop w-4 text-zinc-400"></i> OBS Stream Overlays
+        </button>
+      </div>
+
+      <!-- OBS Browser Source Widget Box -->
+      <div class="bg-zinc-950 p-3 rounded-xl border border-twitch-border space-y-2">
+        <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">OBS Overlay URL</span>
+        <div class="flex items-center gap-1 bg-twitch-card px-2 py-1 rounded border border-twitch-border">
+          <input type="text" readonly value="https://chappie.app/overlay/v3" class="w-full bg-transparent text-[10px] text-zinc-400 focus:outline-none">
+          <button onclick="alert('OBS Browser Source URL copied to clipboard!')" class="text-xs text-purple-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Central Workspace Area -->
+    <main class="flex-1 p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left Active Tab View (Dynamic Section) -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Tab 1: Overview & Controls -->
+        <section id="tab-overview" class="tab-content space-y-6">
+          
+          <!-- Broadcaster Status Header -->
+          <div class="bg-twitch-card p-5 rounded-2xl border border-twitch-border shadow-md flex items-center justify-between">
+            <div id="profileContent" class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-600 text-xl border border-twitch-border">
+                <i class="fa-solid fa-user-slash"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-white text-base">No Broadcaster Profile Linked</h3>
+                <p class="text-xs text-zinc-400">Click "Connect Twitch Profile" to link your channel to Chappie.</p>
+              </div>
+            </div>
+            <span id="profileStatusBadge" class="text-xs font-bold bg-zinc-800 text-zinc-400 px-3 py-1 rounded-full border border-zinc-700">Offline</span>
           </div>
-          <p class="font-bold text-zinc-200 text-sm">No Profile Connected</p>
-          <p class="text-xs text-zinc-500 mt-1 max-w-xs mx-auto">Click <strong>Connect with Twitch</strong> above to link your channel instantly.</p>
-        </div>
-      </div>
 
-      <!-- Bits TTS Settings -->
-      <div class="bg-twitch-card p-5 rounded-2xl border border-twitch-border shadow-lg space-y-4">
-        <div class="flex items-center justify-between border-b border-twitch-border pb-3">
-          <h2 class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
-            <i class="fa-solid fa-volume-high"></i> Bits Voice Reader (TTS)
-          </h2>
-          <span class="text-[10px] font-bold bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full">Min 50 Bits</span>
-        </div>
-        <div>
-          <label class="text-xs font-semibold text-zinc-300 block mb-1">Minimum Bits for TTS</label>
-          <div class="flex items-center gap-2">
-            <input type="number" id="minBitsInput" value="50" min="1" class="w-full bg-zinc-950 border border-twitch-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple font-semibold">
-            <span class="text-xs text-amber-400 font-bold whitespace-nowrap bg-amber-500/10 border border-amber-500/20 px-3 py-2 rounded-lg">
-              <i class="fa-solid fa-gem mr-1"></i> Bits
-            </span>
+          <!-- Feature Quick Toggles -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-twitch-card p-4 rounded-xl border border-twitch-border flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">AI Auto-Chat</span>
+                <span class="text-[10px] text-zinc-400">Responds to !chappy</span>
+              </div>
+              <input type="checkbox" checked class="accent-purple-600 w-4 h-4 cursor-pointer">
+            </div>
+
+            <div class="bg-twitch-card p-4 rounded-xl border border-twitch-border flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">Bits TTS Reader</span>
+                <span class="text-[10px] text-zinc-400">Min 50 Bits required</span>
+              </div>
+              <input type="checkbox" checked class="accent-purple-600 w-4 h-4 cursor-pointer">
+            </div>
+
+            <div class="bg-twitch-card p-4 rounded-xl border border-twitch-border flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">Auto Clip Hunter</span>
+                <span class="text-[10px] text-zinc-400">Clips on laughter spikes</span>
+              </div>
+              <input type="checkbox" checked class="accent-purple-600 w-4 h-4 cursor-pointer">
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Column 2: Clip Hunter -->
-    <div class="bg-twitch-card p-5 rounded-2xl border border-twitch-border shadow-lg flex flex-col justify-between space-y-4">
-      <div>
-        <div class="flex items-center justify-between border-b border-twitch-border pb-3 mb-4">
-          <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-            <i class="fa-solid fa-scissors text-purple-400"></i> Auto Clip Hunter
-          </h2>
-          <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">Active</span>
-        </div>
-        <div id="clipFeed" class="bg-zinc-950 border border-twitch-border rounded-xl p-3 space-y-2 overflow-y-auto h-64 custom-scrollbar text-xs">
-          <div class="text-zinc-600 text-center py-10">[ Watching chat for hype & laughter triggers ]</div>
-        </div>
-      </div>
-      <button onclick="triggerManualAutoClip()" class="w-full bg-purple-950/40 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-bolt text-amber-400"></i> Test Laughter Auto-Clip
-      </button>
-    </div>
+          <!-- Auto Clip Hunter Box -->
+          <div class="bg-twitch-card p-5 rounded-2xl border border-twitch-border shadow-md space-y-3">
+            <div class="flex items-center justify-between border-b border-twitch-border pb-3">
+              <h3 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-scissors text-purple-400"></i> Auto Clip Hunter Queue
+              </h3>
+              <button onclick="triggerManualAutoClip()" class="text-xs text-purple-400 hover:text-purple-300 font-semibold">
+                <i class="fa-solid fa-bolt mr-1"></i> Test Clip Spike
+              </button>
+            </div>
 
-    <!-- Column 3: Live Chat Simulator -->
-    <div class="bg-twitch-card p-5 rounded-2xl border border-twitch-border shadow-lg flex flex-col justify-between">
-      <div>
-        <div class="flex items-center justify-between border-b border-twitch-border pb-3 mb-3">
-          <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Live Chat & Event Feed</h2>
-          <span class="text-xs text-zinc-500 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Ready
-          </span>
-        </div>
-        <div id="chatBox" class="bg-zinc-950 border border-twitch-border rounded-xl p-3 space-y-3 h-64 overflow-y-auto custom-scrollbar text-xs">
-          <div class="text-zinc-600 text-center py-2">[ Chappy Bot Ready ]</div>
-        </div>
-      </div>
-      <div class="mt-4 space-y-2">
-        <div class="flex gap-2">
-          <input type="text" id="chatInput" placeholder="Type !joke or chat..." class="flex-1 bg-zinc-950 border border-twitch-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple" onkeypress="if(event.key==='Enter') sendChatMessage()">
-          <input type="number" id="bitsInput" value="0" min="0" placeholder="Bits" class="w-20 bg-zinc-950 border border-twitch-border rounded-xl px-2 py-2 text-xs text-amber-400 font-bold text-center focus:outline-none focus:border-amber-500">
-        </div>
-        <button onclick="sendChatMessage()" class="w-full bg-twitch-purple hover:bg-twitch-hover py-2.5 rounded-xl text-xs font-bold text-white transition">Send Test Message</button>
-      </div>
-    </div>
-
-  </main>
-
-  <footer class="bg-twitch-card border-t border-twitch-border py-4 text-center text-xs text-zinc-500">
-    <p>Chappy Open-Source Stream Engine • Public Release</p>
-  </footer>
-
-  <script>
-    // Embed your master Twitch Application Client ID here
-    const CHAPPY_CLIENT_ID = 'YOUR_REGISTERED_TWITCH_CLIENT_ID_HERE';
-
-    let activeToken = localStorage.getItem('chappy_twitch_token') || null;
-    let tokens = 2500;
-
-    const jokes = [
-      "Why did the gamer bring a ladder to the stream? To reach the high scores!",
-      "How do stream moderators drink their tea? Out of a ban-mug!",
-      "Why was the GPU overheating? It saw the gamer's render queue!"
-    ];
-
-    function openTwitchAuthPopup() {
-      if (CHAPPY_CLIENT_ID === 'YOUR_REGISTERED_TWITCH_CLIENT_ID_HERE') {
-        alert("Please set your registered Twitch Client ID in the CHAPPY_CLIENT_ID variable in the code.");
-        return;
-      }
-
-      const redirectUri = window.location.href.split('#')[0].split('?')[0];
-      const scopes = ['chat:read', 'chat:edit', 'bits:read', 'clips:edit', 'channel:read:subscriptions', 'user:read:email'].join(' ');
-
-      const authUrl = `https://id.twitch.tv/oauth2/authorize` +
-        `?client_id=${lhnx8pt7tdyccuzs41wd5mgs8g5cbn}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        `&response_type=token` +
-        `&scope=${encodeURIComponent(scopes)}` +
-        `&force_verify=true`;
-
-      const width = 500, height = 700;
-      const left = (window.screen.width / 2) - (width / 2);
-      const top = (window.screen.height / 2) - (height / 2);
-
-      window.open(authUrl, 'TwitchAuthorization', `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const hash = window.location.hash;
-      if (hash.includes('access_token=')) {
-        const params = new URLSearchParams(hash.substring(1));
-        const token = params.get('access_token');
-        if (token) {
-          if (window.opener) {
-            window.opener.postMessage({ type: 'TWITCH_AUTH_SUCCESS', token: token }, '*');
-            window.close();
-            return;
-          }
-          localStorage.setItem('chappy_twitch_token', token);
-          activeToken = token;
-          window.location.hash = '';
-        }
-      }
-
-      if (activeToken) {
-        fetchRealTwitchProfile(activeToken);
-      }
-    });
-
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'TWITCH_AUTH_SUCCESS') {
-        const token = event.data.token;
-        localStorage.setItem('chappy_twitch_token', token);
-        activeToken = token;
-        fetchRealTwitchProfile(token);
-      }
-    });
-
-    async function fetchRealTwitchProfile(token) {
-      try {
-        const response = await fetch('https://api.twitch.tv/helix/users', {
-          headers: {
-            'Client-ID': CHAPPY_CLIENT_ID,
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) throw new Error('Token expired');
-
-        const data = await response.json();
-        const user = data.data[0];
-
-        document.getElementById('authBtnText').innerText = user.display_name;
-        document.getElementById('authBtn').classList.replace('bg-twitch-purple', 'bg-emerald-600');
-
-        document.getElementById('profileStatusBadge').innerText = "Connected";
-        document.getElementById('profileStatusBadge').className = "text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/30";
-
-        document.getElementById('profileContent').innerHTML = `
-          <img src="${user.profile_image_url}" class="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-purple-500 shadow-md">
-          <h3 class="font-bold text-white text-base">${user.display_name}</h3>
-          <p class="text-xs text-purple-400">@${user.login}</p>
-          <span class="inline-block mt-2 text-[11px] bg-purple-900/60 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/40">Twitch Channel Linked</span>
-          <br>
-          <button onclick="logoutTwitch()" class="mt-3 text-xs text-red-400 hover:underline">Log Out</button>
-        `;
-
-        addSystemChat(`Connected channel: ${user.display_name} (@${user.login})`);
-      } catch (err) {
-        logoutTwitch();
-      }
-    }
-
-    function logoutTwitch() {
-      localStorage.removeItem('chappy_twitch_token');
-      activeToken = null;
-      document.getElementById('authBtnText').innerText = "Connect with Twitch";
-      document.getElementById('authBtn').classList.replace('bg-emerald-600', 'bg-twitch-purple');
-      document.getElementById('profileStatusBadge').innerText = "Not Connected";
-      document.getElementById('profileStatusBadge').className = "text-[10px] font-bold bg-zinc-800 text-zinc-400 px-2.5 py-0.5 rounded-full border border-zinc-700";
-      
-      document.getElementById('profileContent').innerHTML = `
-        <div class="w-16 h-16 rounded-full bg-zinc-900 mx-auto flex items-center justify-center text-zinc-600 text-2xl mb-3 border border-twitch-border">
-          <i class="fa-solid fa-user-slash"></i>
-        </div>
-        <p class="font-bold text-zinc-200 text-sm">No Profile Connected</p>
-        <p class="text-xs text-zinc-500 mt-1 max-w-xs mx-auto">Click <strong>Connect with Twitch</strong> above to link your channel instantly.</p>
-      `;
-      addSystemChat("Profile unlinked.");
-    }
-
-    function triggerManualAutoClip() {
-      if (tokens < 10) return alert("Insufficient Clip Tokens!");
-      tokens -= 10;
-      document.getElementById('tokenBalance').innerText = tokens.toLocaleString();
-
-      const clipFeed = document.getElementById('clipFeed');
-      if (clipFeed.innerText.includes('[ Watching chat')) clipFeed.innerHTML = '';
-
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const clipItem = document.createElement('div');
-      clipItem.className = "bg-purple-950/40 border border-purple-500/40 p-2.5 rounded-xl flex items-center justify-between";
-      clipItem.innerHTML = `
-        <div>
-          <div class="font-bold text-purple-300 flex items-center gap-1.5">
-            <i class="fa-solid fa-video text-amber-400"></i> Clip #${Math.floor(1000 + Math.random() * 9000)}
+            <div id="clipFeed" class="bg-zinc-950 border border-twitch-border rounded-xl p-3 space-y-2 overflow-y-auto h-44 custom-scrollbar text-xs">
+              <div class="text-zinc-600 text-center py-8">[ Watching channel chat for clip triggers ]</div>
+            </div>
           </div>
-          <p class="text-[10px] text-zinc-400">Laughter Spike • ${time}</p>
-        </div>
-        <span class="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">-10 Tokens</span>
-      `;
-      clipFeed.prepend(clipItem);
-      addSystemChat("🎬 Clip Captured! (-10 Tokens)");
-    }
 
-    function addSystemChat(msg) {
-      const box = document.getElementById('chatBox');
-      const div = document.createElement('div');
-      div.className = "text-zinc-500 text-center text-[11px] italic";
-      div.innerText = `[ ${msg} ]`;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
+        </section>
 
-    function sendChatMessage() {
-      const input = document.getElementById('chatInput');
-      const bitsInput = document.getElementById('bitsInput');
-      const box = document.getElementById('chatBox');
+        <!-- Tab 2: AI Persona -->
+        <section id="tab-ai" class="tab-content space-y-4 hidden">
+          <div class="bg-twitch-card p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
+            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">AI Persona & Brain Controls</h3>
+            <div>
+              <label class="text-xs font-semibold text-zinc-300 block mb-1">Bot Persona Preset</label>
+              <select class="w-full bg-zinc-950 border border-twitch-border rounded-lg px-3 py-2 text-xs text-zinc-200">
+                <option>Hype & Energetic Gamer</option>
+                <option>Sarcastic Moderator</option>
+                <option>Helpful Stream Assistant</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-zinc-300 block mb-1">System Prompt Instructions</label>
+              <textarea rows="4" class="w-full bg-zinc-950 border border-twitch-border rounded-lg p-3 text-xs text-zinc-200 leading-relaxed" placeholder="Tell Chappie how to talk to your chat..."></textarea>
+            </div>
+          </div>
+        </section>
 
-      const text = input.value.trim();
-      const bits = parseInt(bitsInput.value) || 0;
-      const minBits = parseInt(document.getElementById('minBitsInput').value) || 50;
-
-      if (!text && bits <= 0) return;
-
-      const userDiv = document.createElement('div');
-      let badgeHtml = '';
-      if (bits > 0) {
-        badgeHtml = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/40 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1.5"><i class="fa-solid fa-gem mr-1"></i> ${bits} Bits</span>`;
-      }
-      userDiv.innerHTML = `${badgeHtml}<span class="text-purple-400 font-bold">Viewer:</span> <span class="text-zinc-200">${escapeHtml(text)}</span>`;
-      box.appendChild(userDiv);
-
-      input.value = '';
-      bitsInput.value = '0';
-
-      if (bits > 0) {
-        if (bits >= minBits) {
-          addSystemChat(`🔊 [TTS Audio]: Read aloud on stream for ${bits} Bits!`);
-        } else {
-          addSystemChat(`🔇 [TTS Skipped]: Cheer was ${bits} Bits (Min required: ${minBits} Bits).`);
-        }
-      }
-
-      const lower = text.toLowerCase();
-      setTimeout(() => {
-        if (lower.includes('!joke')) {
-          const botDiv = document.createElement('div');
-          botDiv.className = "bg-purple-950/30 p-2 rounded-xl border border-purple-800/40";
-          botDiv.innerHTML = `<span class="text-purple-300 font-bold">🤖 Chappy:</span> ${jokes[Math.floor(Math.random() * jokes.length)]}`;
-          box.appendChild(botDiv);
-          box.scrollTop = box.scrollHeight;
-        }
-      }, 500);
-
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function escapeHtml(str) {
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-  </script>
-</body>
-</html>
-     
+        <!-- Tab 3: Bits TTS -->
+        <section id="tab-tts" class="tab-content space-y-4 hidden">
+          <div class="bg-twitch-card p-5 rounded-2xl border border-twitch-border shadow-md space-y-4">
+            <h3 class="text-xs font-bold text-purple-400
